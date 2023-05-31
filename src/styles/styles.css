@@ -1,0 +1,102 @@
+.app {
+  min-height: 100vh;
+}
+.Header {
+  background-color: rgb(112, 37, 173);
+  padding: 1rem;
+  font-family: "Mulish", sans-serif;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.Header > button > svg {
+  color: white !important;
+}
+.heading {
+  color: white;
+}
+
+.chat {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.chat > .chat-body {
+  height: 85%;
+  padding: 10px;
+}
+
+.chat > form {
+  padding: 14px;
+}
+
+.HomeScreen {
+  display: flex;
+  height: 90vh;
+}
+
+.chatList {
+  overflow-y: scroll;
+  height: auto;
+  width: auto;
+  border-right: 1px solid gray;
+}
+
+.chatListItems {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid gray;
+  padding: 0.5rem;
+}
+
+.chatListItems:hover {
+  background-color: whitesmoke;
+}
+
+.chatListItems .user {
+  color: black;
+  font-weight: bold;
+}
+.chatListItems .msg {
+  width: 75%;
+  color: #262222d6;
+  font-weight: lighter;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: smaller;
+  overflow: hidden;
+}
+
+.chatInput {
+  border-radius: 1rem;
+  border: 1px solid rgb(126, 123, 123);
+}
+
+.chatInput > .input-actions {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px;
+}
+
+/* For Chrome, Safari, and Opera */
+::-webkit-scrollbar {
+  width: 4px; /* Set the width of the scrollbar */
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Set the color of the track */
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #a1a1a1; /* Set the color of the scrollbar handle */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #616060; /* Set the color of the scrollbar handle on hover */
+}

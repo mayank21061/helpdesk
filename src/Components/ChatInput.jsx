@@ -36,23 +36,23 @@ const ChatInput = (props) => {
   const formik = useFormik({
     initialValues: initialValues,
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      let formData = { ...values };
-      formik.setFieldValue("message", "");
-    },
+    onSubmit: askChatGpt,
+    //  (values) => {
+    //   let formData = { ...values };
+    //   formik.setFieldValue("message", "");
+    // },
   });
 
   function askChatGpt(data, action) {
     if (props.screenShot) {
-      // addUserMsg(data.userQuery, props.screenShot);
+      addUserMsg(data.message, props.screenShot);
       props.handleClose();
     } else {
-      // addUserMsg(data.userQuery);
+      addUserMsg(data.message);
     }
     action.resetForm();
   }
 
-  //   function
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="chatInput">

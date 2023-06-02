@@ -1,4 +1,11 @@
-const { app, BrowserWindow, screen, Menu, ipcMain } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  screen,
+  Menu,
+  ipcMain,
+  globalShortcut,
+} = require("electron");
 const path = require("path");
 const windowStateKeeper = require("electron-window-state");
 const isDev = require("electron-is-dev");
@@ -6,7 +13,6 @@ require("dotenv").config();
 const fs = require("fs");
 const { spawn } = require("child_process");
 
-const warPath = `${path.join(__dirname, "./doctosfdt.war")}`;
 
 let win;
 
@@ -23,7 +29,7 @@ function createWindow(width, height) {
     height: mainWindowState.height,
     // frame: false,
     icon: path.join(__dirname, "../public/favicon.ico"),
-    title: "Help Desk",
+    title: "CC Helpdesk",
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -43,21 +49,23 @@ function createWindow(width, height) {
   });
 
   mainWindowState.manage(win);
-  isDev && win.webContents.openDevTools();
+  win.webContents.openDevTools();
+  globalShortcut.register("Alt+F4", () => {
+    app.quit();
+  });
 }
 
 app.on("ready", () => {
   Menu.setApplicationMenu(null);
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   createWindow(width, height);
-  spawn("java", ["-jar", warPath]);
   // ipcMain.on("docxtosfdt", (event, buffer) => {
   //   exec("java -jar doctosfdt.war");
   // });
 });
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
-});
+// app.on("window-all-closed", () => {
+//   if (process.platform !== "darwin") {
+//     app.quit();
+//   }
+// });

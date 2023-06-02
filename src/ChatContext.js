@@ -2,8 +2,8 @@ import React, { createContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import BotMessage from "./Components/BotMessage";
 import UserMessage from "./Components/UserMessage";
-// import SockJS from "sockjs-client";
-// import { over } from "stompjs";
+import SockJS from "sockjs-client";
+import { over } from "stompjs";
 
 export const HelpdeskContext = createContext();
 
@@ -11,20 +11,20 @@ export const HelpdeskProvider = ({ children }) => {
   let role = sessionStorage.getItem("role");
 
   let uuid = uuidv4();
-  // const initilMessage = {
-  //   uuid,
-  //   isBot: true,
-  //   component: (
-  //     <BotMessage
-  //       key={uuid}
-  //       uuid={uuid}
-  //       message="Hello What Can I Do For You"
-  //     />
-  //   ),
-  // };
+  let initilMessage = {
+    uuid,
+    isBot: true,
+    component: (
+      <BotMessage
+        key={uuid}
+        uuid={uuid}
+        message="Hello What Can I Do For You"
+      />
+    ),
+  };
 
   const [openBot, setopenBot] = useState(false);
-  const [messages, setmessages] = useState([]);
+  const [messages, setmessages] = useState([initilMessage]);
   const [lastQuery, setlastQuery] = useState({
     text: "",
     file: "",
@@ -34,6 +34,8 @@ export const HelpdeskProvider = ({ children }) => {
   const [connected, setConnected] = useState(false);
   const [helpDesk, setHelpDesk] = useState("");
   const [users, setUsers] = useState([]);
+  const [sender, setSender] = useState(null);
+
   useEffect(() => {
     fetch("http://11.0.0.118:8537/get-senders/7wg.aco.aco")
       .then((resp) => {
@@ -43,25 +45,41 @@ export const HelpdeskProvider = ({ children }) => {
         setUsers(resp);
       });
   }, []);
-  // useEffect(() => {
-  //   if (stompClient) {
-  //     stompClient.debug = null;
-  //     stompClient.connect({}, onConnected, onError);
-  //   } else {
-  //     connect();
-  //   }
-  // }, [stompClient]);
+
+  useEffect(() => {
+    if (sender !== null) {
+      fetch(`http://11.0.0.118:8537/get-chat/${sender}`, {
+        headers: { sender: "7wg.aco.aco" },
+      })
+        .then((resp) => {
+          return resp.json();
+        })
+        .then((resp) => {
+          // initilMessage = { resp };
+          console.log(resp);
+        });
+    }
+  }, [sender]);
+
+  useEffect(() => {
+    if (stompClient) {
+      stompClient.debug = null;
+      stompClient.connect({}, onConnected, onError);
+    } else {
+      connect();
+    }
+  }, [stompClient]);
 
   // connecting to socket
-  // const connect = async () => {
-  //   let helpDesk = await (
-  //     await fetch(process.env.REACT_APP_GET_SUPPORT)
-  //   ).text();
-  //   let Sock = new SockJS(process.env.REACT_APP_CHAT_BOT);
-  //   let Client = over(Sock);
-  //   setHelpDesk(helpDesk);
-  //   setStompClient(Client);
-  // };
+  const connect = async () => {
+    let helpDesk = await (
+      await fetch(process.env.REACT_APP_GET_SUPPORT)
+    ).text();
+    let Sock = new SockJS(process.env.REACT_APP_CHAT_BOT);
+    let Client = over(Sock);
+    setHelpDesk(helpDesk);
+    setStompClient(Client);
+  };
 
   const onConnected = () => {
     setConnected(true);
@@ -122,6 +140,7 @@ export const HelpdeskProvider = ({ children }) => {
   };
 
   const addUserMsg = (msg, blob) => {
+    console.log(msg);
     let uuid = uuidv4();
     let userMsg = {
       uuid,
@@ -138,12 +157,15 @@ export const HelpdeskProvider = ({ children }) => {
   };
 
   const send = (body) => {
+    console.log(body);
     stompClient.send("/helpdesk/private-message", {}, JSON.stringify(body));
   };
 
   return (
     <HelpdeskContext.Provider
       value={{
+        sender,
+        setSender,
         users,
         openBot,
         setopenBot,

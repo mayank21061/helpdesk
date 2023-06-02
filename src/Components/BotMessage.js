@@ -1,6 +1,6 @@
 import { Avatar } from "@mui/material";
 import React, { useState } from "react";
-import { FaRobot } from "react-icons/fa";
+import { AiOutlineUser } from "react-icons/ai";
 import Loading from "./Loading";
 import { useEffect } from "react";
 
@@ -18,7 +18,7 @@ const BotMessage = ({ uuid, message, blob }) => {
   }, [loading]);
 
   const scrollToBottm = () => {
-    let element = document.getElementById("botId");
+    let element = document.getElementById("chat-body");
     element.scrollTo({
       top: element.scrollHeight - element.clientHeight,
       behavior: "smooth",
@@ -43,9 +43,9 @@ const BotMessage = ({ uuid, message, blob }) => {
         <Avatar
           variant="circular"
           className="botAvatar"
-          src={`${process.env.PUBLIC_URL}/assets/images/bot-logo.png`}
+          // src={`${process.env.PUBLIC_URL}/assets/images/bot-logo.png`}
         >
-          <FaRobot />
+          <AiOutlineUser />
         </Avatar>
         <div className="botMessage">
           {loading ? (
@@ -72,7 +72,7 @@ const BotMessage = ({ uuid, message, blob }) => {
           className="botAvatar"
           src={`${process.env.PUBLIC_URL}/assets/images/bot-logo.png`}
         >
-          <FaRobot />
+          <AiOutlineUser />
         </Avatar>
         <div className="botMessage">
           {loading ? <Loading /> : <span>{message}</span>}

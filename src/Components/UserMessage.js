@@ -16,7 +16,7 @@ const UserMessage = ({ uuid, message, blob }) => {
   }, [blob]);
 
   const scrollToBottm = () => {
-    let element = document.getElementById("botId");
+    let element = document.getElementById("chat-body");
     element.scrollTo({
       top: element.scrollHeight - element.clientHeight,
       behavior: "smooth",

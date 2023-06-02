@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import ChatInput from "./ChatInput";
 import ChatBody from "./ChatBody";
+import { HelpdeskContext } from "../ChatContext";
 
 const Chat = () => {
+  const { user } = useContext(HelpdeskContext);
   return (
     <div className="chat">
-      <ChatBody/>
+      <ChatBody user={user} />
       <ChatInput />
     </div>
   );

@@ -5,6 +5,7 @@ import Loading from "./Loading";
 import { useEffect } from "react";
 
 const BotMessage = ({ uuid, message, blob }) => {
+  // console.log(blob);
   const [loading, setloading] = useState(true);
 
   useEffect(() => {
@@ -39,7 +40,7 @@ const BotMessage = ({ uuid, message, blob }) => {
 
   if (blob) {
     return (
-      <div className="user-message-img-container">
+      <div className="bot-message-img-container">
         <Avatar
           variant="circular"
           className="botAvatar"
@@ -51,7 +52,7 @@ const BotMessage = ({ uuid, message, blob }) => {
           {loading ? (
             <Loading />
           ) : (
-            <div className="userMessage-img">
+            <div className="botMessage-img">
               <img
                 className="ss-img"
                 src={blob ? convertToBlob(blob) : ""}

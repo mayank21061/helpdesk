@@ -33,6 +33,7 @@
 .chat > .chat-body {
   height: 85%;
   padding: 10px;
+  overflow-y: scroll;
 }
 
 .chat > form {
@@ -207,7 +208,7 @@
   border-top-right-radius: 13px;
   border-bottom-right-radius: 13px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   padding: 15px;
   margin-top: 9px;
@@ -231,11 +232,24 @@
   border-top-left-radius: 13px;
   border-bottom-left-radius: 13px;
   display: flex;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: flex-end;
   align-items: center;
   padding: 15px;
   margin-top: 9px;
   font-size: small;
+}
+
+.user-message-img-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.bot-message-img-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 }
 
 .userMessage-img {
@@ -246,9 +260,10 @@
   border-bottom-left-radius: 13px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   margin-top: 9px;
+  background-color: var(--bot-header-bgColor);
 }
 
 .userMessage span {
@@ -375,8 +390,10 @@
 /* Hide or show bot messsage or screen shot image */
 
 .ss-img {
+  height: 10rem;
+  width: 20rem;
   cursor: pointer;
-  border-radius: 20px;
+  border-radius: 8px;
   border: 1px solid #80808040;
 }
 
@@ -438,8 +455,6 @@
   background: #ffffff38;
 }
 
-/* Css for replacing document and image with privacy content */
-
 .ss-privacy-content {
   width: 100%;
   height: 100%;
@@ -458,4 +473,18 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.userMessage-img .pdfIcons {
+  cursor: pointer;
+  background-color: rgba(150, 85, 200, 0.555);
+}
+
+.userMessage-img .pdfIcons > svg {
+  color: #bdbdbd !important;
+}
+
+.welcomeScreen {
+  display: flex;
+  justify-content: center;
 }

@@ -1,7 +1,7 @@
-import { Avatar } from "@mui/material";
+import { Avatar, IconButton } from "@mui/material";
 import React from "react";
 import { useEffect } from "react";
-import { FaUser } from "react-icons/fa";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 
 const UserMessage = ({ uuid, message, blob }) => {
   useEffect(() => {
@@ -10,8 +10,7 @@ const UserMessage = ({ uuid, message, blob }) => {
 
   useEffect(() => {
     if (blob) {
-      const file = new File([blob], "New ss", { type: "image/png" });
-      console.log(file);
+      const file = new File([blob], "New ss", { type: "application/pdf" });
     }
   }, [blob]);
 
@@ -23,21 +22,37 @@ const UserMessage = ({ uuid, message, blob }) => {
     });
   };
 
-  const handleFullScreen = (blob) => {
-    let src = URL.createObjectURL(blob);
-    window.open(src);
+  const handleFullScreen = (base64) => {
+    if (typeof base64 === "string") {
+      const byteCharacters = atob(base64);
+      const byteNumbers = new Array(byteCharacters.length);
+
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+
+      const byteArray = new Uint8Array(byteNumbers);
+      const file = new Blob([byteArray], { type: "application/pdf" });
+      const fileURL = URL.createObjectURL(file);
+
+      const newWindow = window.open(fileURL, "_blank");
+      if (!newWindow) {
+        window.location.href = fileURL;
+      }
+    } else {
+      const fileUrl = URL.createObjectURL(base64);
+      console.log(base64);
+      window.open(fileUrl);
+    }
   };
 
   if (blob) {
     return (
       <div className="user-message-img-container">
         <div className="userMessage-img">
-          <img
-            className="ss-img"
-            src={blob ? URL.createObjectURL(blob) : ""}
-            alt="ScreenShot"
-            onClick={() => handleFullScreen(blob)}
-          />
+          <div className="pdfIcon" onClick={(e) => handleFullScreen(blob)}>
+            <PictureAsPdfIcon />
+          </div>
           {message && <span>{message}</span>}
         </div>
       </div>

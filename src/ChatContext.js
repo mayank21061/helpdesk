@@ -8,19 +8,17 @@ import { over } from "stompjs";
 export const HelpdeskContext = createContext();
 
 export const HelpdeskProvider = ({ children }) => {
-  let role = sessionStorage.getItem("role");
-
   let uuid = uuidv4();
   let initilMessage = {
-    uuid,
-    isBot: true,
-    component: (
-      <BotMessage
-        key={uuid}
-        uuid={uuid}
-        message="Hello What Can I Do For You"
-      />
-    ),
+    // uuid,
+    // isBot: true,
+    // component: (
+    //   <BotMessage
+    //     key={uuid}
+    //     uuid={uuid}
+    //     message="Hello What Can I Do For You"
+    //   />
+    // ),
   };
 
   const [openBot, setopenBot] = useState(false);
@@ -35,28 +33,53 @@ export const HelpdeskProvider = ({ children }) => {
   const [helpDesk, setHelpDesk] = useState("");
   const [users, setUsers] = useState([]);
   const [sender, setSender] = useState(null);
+  const [helper, setHelper] = useState("");
 
   useEffect(() => {
-    fetch("http://11.0.0.118:8537/get-senders/7wg.aco.aco")
+    fetch("http://11.0.0.118:8537/get-senders/7wg.cad.cad")
       .then((resp) => {
         return resp.json();
       })
       .then((resp) => {
         setUsers(resp);
+        setHelper("7wg.cad.cad");
       });
   }, []);
 
   useEffect(() => {
+    console.log(sender);
     if (sender !== null) {
-      fetch(`http://11.0.0.118:8537/get-chat/${sender}`, {
-        headers: { sender: "7wg.aco.aco" },
+      fetch(`http://11.0.0.118:8537/get-chat/${sender.user}`, {
+        headers: { sender: "7wg.cad.cad" },
       })
         .then((resp) => {
           return resp.json();
         })
         .then((resp) => {
-          // initilMessage = { resp };
-          console.log(resp);
+          let tempArr = [];
+          resp.map((item) =>
+            tempArr.push({
+              uuid: uuidv4(),
+              isBot: item.receiverName === helper ? true : false,
+              component:
+                item.receiverName === helper ? (
+                  <BotMessage
+                    key={uuid}
+                    uuid={uuid}
+                    message={item.text}
+                    blob={item.file}
+                  />
+                ) : (
+                  <UserMessage
+                    key={uuid}
+                    uuid={uuid}
+                    message={item.text}
+                    blob={item.file}
+                  />
+                ),
+            })
+          );
+          setmessages(tempArr);
         });
     }
   }, [sender]);
@@ -72,23 +95,20 @@ export const HelpdeskProvider = ({ children }) => {
 
   // connecting to socket
   const connect = async () => {
-    let helpDesk = await (
-      await fetch(process.env.REACT_APP_GET_SUPPORT)
-    ).text();
-    let Sock = new SockJS(process.env.REACT_APP_CHAT_BOT);
-    let Client = over(Sock);
-    setHelpDesk(helpDesk);
-    setStompClient(Client);
+    let Sock = new SockJS(process.env.REACT_APP_HELPDESK_SOCKET);
+    let client = over(Sock);
+    // setHelpDesk(helpDesk);
+    setStompClient(client);
   };
 
   const onConnected = () => {
     setConnected(true);
-    stompClient.subscribe(`/user/${role}/private`, onGetNotifications);
+    stompClient.subscribe(`/user/7wg.cad.cad/private`, onGetNotifications);
   };
 
   const onGetNotifications = (payload) => {
     let data = JSON.parse(payload.body);
-    console.log(data);
+    console.log("data == ", data);
     addBotMsg(data.text, data.file);
   };
 
@@ -108,8 +128,8 @@ export const HelpdeskProvider = ({ children }) => {
         reader.onloadend = () => {
           const base64 = reader.result.split(",")[1];
           chatMessage = {
-            sender: role,
-            receiverName: helpDesk,
+            sender: "7wg.cad.cad",
+            receiverName: `${sender.user}`,
             text: text,
             file: base64,
           };
@@ -117,8 +137,8 @@ export const HelpdeskProvider = ({ children }) => {
         };
       } else {
         chatMessage = {
-          sender: role,
-          receiverName: helpDesk,
+          sender: "7wg.cad.cad",
+          receiverName: `${sender.user}`,
           text: text,
           file: "",
         };
@@ -140,7 +160,7 @@ export const HelpdeskProvider = ({ children }) => {
   };
 
   const addUserMsg = (msg, blob) => {
-    console.log(msg);
+    console.log(msg, blob);
     let uuid = uuidv4();
     let userMsg = {
       uuid,
@@ -164,6 +184,7 @@ export const HelpdeskProvider = ({ children }) => {
   return (
     <HelpdeskContext.Provider
       value={{
+        helper,
         sender,
         setSender,
         users,

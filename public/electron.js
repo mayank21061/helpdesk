@@ -10,9 +10,6 @@ const path = require("path");
 const windowStateKeeper = require("electron-window-state");
 const isDev = require("electron-is-dev");
 require("dotenv").config();
-const fs = require("fs");
-const { spawn } = require("child_process");
-
 
 let win;
 
@@ -40,7 +37,7 @@ function createWindow(width, height) {
 
   win.loadURL(
     isDev
-      ? "http://localhost:3000/eoffice"
+      ? "http://localhost:3000"
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
 
@@ -59,9 +56,6 @@ app.on("ready", () => {
   Menu.setApplicationMenu(null);
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   createWindow(width, height);
-  // ipcMain.on("docxtosfdt", (event, buffer) => {
-  //   exec("java -jar doctosfdt.war");
-  // });
 });
 
 // app.on("window-all-closed", () => {

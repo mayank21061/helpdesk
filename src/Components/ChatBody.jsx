@@ -3,7 +3,6 @@ import { HelpdeskContext } from "../ChatContext";
 
 const ChatBody = () => {
   const { messages } = useContext(HelpdeskContext);
-  console.log(messages);
   return (
     <div className="chat-body" id="chat-body">
       {messages.map((item) => (

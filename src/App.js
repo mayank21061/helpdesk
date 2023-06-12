@@ -1,16 +1,21 @@
 import "./styles/styles.css";
 import HomeScreen from "./Components/HomeScreen";
-import Header from "./Components/Header";
 import { HelpdeskProvider } from "./ChatContext";
+import {  HashRouter, Route, Routes } from "react-router-dom";
+import LoginPage from "./LoginPage";
 
 function App() {
   return (
-    <div className="app">
-      <HelpdeskProvider>
-        <Header />
-        <HomeScreen />
-      </HelpdeskProvider>
-    </div>
+    <HelpdeskProvider>
+      <div className="app">
+        <HashRouter>
+          <Routes>
+            <Route exact path="/" Component={LoginPage} />
+            <Route path="/helpdesk" Component={HomeScreen} />
+          </Routes>
+        </HashRouter>
+      </div>
+    </HelpdeskProvider>
   );
 }
 

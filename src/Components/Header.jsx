@@ -2,13 +2,26 @@ import React from "react";
 import "../styles/styles.css";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { IconButton, Tooltip } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const navigate = useNavigate();
   return (
     <div className="Header">
-      <span className="heading">Helpdesk</span>
+      <div>
+        {/* <img
+          src={`${process.env.PUBLIC_URL}/assets/costacloud.png`}
+          alt="costacloud-logo"
+          height={25}
+        /> */}
+        <span className="heading">Helpdesk</span>
+      </div>
       <Tooltip title="LOGOUT">
-        <IconButton>
+        <IconButton
+          onClick={(e) => {
+            navigate("/");
+          }}
+        >
           <LogoutIcon fontSize="small" />
         </IconButton>
       </Tooltip>

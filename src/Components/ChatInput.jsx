@@ -38,6 +38,7 @@ const ChatInput = (props) => {
   const initialValues = {
     message: "",
     attachmentFiles: null,
+    fileName: null,
   };
 
   const formik = useFormik({
@@ -48,7 +49,7 @@ const ChatInput = (props) => {
 
   function askChatGpt(data, action) {
     if (data.attachmentFiles) {
-      addUserMsg(data.message, data.attachmentFiles);
+      addUserMsg(data.message, data.attachmentFiles, data.fileName);
     } else {
       addUserMsg(data.message);
     }
@@ -66,10 +67,12 @@ const ChatInput = (props) => {
 
   const handleFileChange = async (event) => {
     const files = await event.target.files[0];
+    console.log(files);
     if (files?.size > 25 * 1024 * 1024) {
       setAlertMessage(true);
     } else if (files) {
       formik.setFieldValue("attachmentFiles", files);
+      formik.setFieldValue("fileName", files.name);
     }
   };
 
@@ -119,6 +122,7 @@ const ChatInput = (props) => {
                   onClick={(e) => handleFullScreen(e.target.value)}
                   onDelete={() => {
                     formik.setFieldValue("attachmentFiles", null);
+                    formik.setFieldValue("fileName", null);
                   }}
                 />
               </div>

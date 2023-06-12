@@ -10,6 +10,8 @@ import {
   Visibility,
   VisibilityOff,
 } from "@mui/icons-material";
+import CryptoJS from "crypto-js";
+import Axios from "axios";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,16 +26,50 @@ const LoginPage = () => {
     password: Yup.string().trim().required("Password is required"),
   });
 
+  const encryptFun = ({ password, username }) => {
+    var keybefore = username + "appolocomputers";
+    var ivbefore = username + "costacloud012014";
+    var key = CryptoJS.enc.Latin1.parse(keybefore.substring(0, 16));
+    var iv = CryptoJS.enc.Latin1.parse(ivbefore.substring(0, 16));
+    var ciphertext = CryptoJS.AES.encrypt(password, key, {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.ZeroPadding,
+    }).toString();
+    return ciphertext;
+  };
+  const handleSubmit = async (data) => {
+    // navigate("/helpdesk");
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      };
+      const credentials = {
+        username: formik.values.username,
+        password: encryptFun(data),
+        keycloak: process.env.REACT_APP_KEYCLOAK,
+        client_id: process.env.REACT_APP_CLIENT_ID,
+      };
+      const response = await fetch(
+        `/auth/token`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...headers,
+          },
+          body: JSON.stringify(credentials),
+        }
+      );
+      const login = await response.json();
+      console.log(login);
+    } catch (e) {}
+  };
   const formik = useFormik({
     initialValues: initialValues,
     validationSchema: VALIDATION_SCHEMA,
-    onSubmit: (values) => {
-      let formData = {
-        ...values,
-      };
-      console.log(formData);
-      navigate("/helpdesk");
-    },
+    onSubmit: handleSubmit,
   });
 
   return (

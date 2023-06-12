@@ -26,6 +26,7 @@ export const HelpdeskProvider = ({ children }) => {
   const [lastQuery, setlastQuery] = useState({
     text: "",
     file: "",
+    fileName: "",
   });
 
   const [stompClient, setStompClient] = useState("");
@@ -119,9 +120,9 @@ export const HelpdeskProvider = ({ children }) => {
   // in this useEffect based on userQuery either callApi for response from assistant and from socket
   useEffect(() => {
     if (lastQuery.text || lastQuery.file) {
-      const { text, file } = lastQuery;
+      const { text, file, fileName } = lastQuery;
       let chatMessage;
-
+      console.log(fileName);
       if (file) {
         let reader = new FileReader();
         reader.readAsDataURL(file);
@@ -130,8 +131,9 @@ export const HelpdeskProvider = ({ children }) => {
           chatMessage = {
             sender: "7wg.cad.cad",
             receiverName: `${sender.user}`,
-            text: text,
+            text,
             file: base64,
+            filename: fileName,
           };
           send(chatMessage);
         };
@@ -159,20 +161,26 @@ export const HelpdeskProvider = ({ children }) => {
     setmessages((prevState) => [...prevState, botMsg]);
   };
 
-  const addUserMsg = (msg, blob) => {
-    console.log(msg, blob);
+  const addUserMsg = (msg, blob, filename) => {
     let uuid = uuidv4();
     let userMsg = {
       uuid,
       isBot: false,
       component: (
-        <UserMessage key={uuid} uuid={uuid} message={msg} blob={blob} />
+        <UserMessage
+          key={uuid}
+          uuid={uuid}
+          message={msg}
+          blob={blob}
+          fileName={filename}
+        />
       ),
     };
     setmessages((prevState) => [...prevState, userMsg]);
     setlastQuery({
       text: msg,
       file: blob,
+      fileName: filename,
     });
   };
 

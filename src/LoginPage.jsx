@@ -39,32 +39,34 @@ const LoginPage = () => {
     return ciphertext;
   };
   const handleSubmit = async (data) => {
-    // navigate("/helpdesk");
-    try {
-      const headers = {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      };
-      const credentials = {
-        username: formik.values.username,
-        password: encryptFun(data),
-        keycloak: process.env.REACT_APP_KEYCLOAK,
-        client_id: process.env.REACT_APP_CLIENT_ID,
-      };
-      const response = await fetch(
-        `/auth/token`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...headers,
-          },
-          body: JSON.stringify(credentials),
-        }
-      );
-      const login = await response.json();
-      console.log(login);
-    } catch (e) {}
+    navigate("/helpdesk");
+    // try {
+    //   const headers = {
+    //     "Content-Type": "application/json",
+    //     Accept: "application/json",
+    //   };
+    //   const credentials = {
+    //     username: formik.values.username,
+    //     password: encryptFun(data),
+    //     keycloak: process.env.REACT_APP_KEYCLOAK,
+    //     client_id: process.env.REACT_APP_CLIENT_ID,
+    //   };
+    //   const response = await fetch(
+    //     `${process.env.REACT_APP_PROXY}/auth/token`,
+    //     {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         ...headers,
+    //       },
+    //       body: JSON.stringify(credentials),
+    //     }
+    //   );
+    //   const login = await response.json();
+    //   console.log(login);
+    // } catch (e) {
+    //   console.log(e);
+    // }
   };
   const formik = useFormik({
     initialValues: initialValues,

@@ -35,20 +35,40 @@ export const HelpdeskProvider = ({ children }) => {
   const [users, setUsers] = useState([]);
   const [sender, setSender] = useState(null);
   const [helper, setHelper] = useState("");
+  const [helperInfo, setHelperInfo] = useState(null);
+  const [username, setUsername] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch("http://11.0.0.118:8537/get-senders/7wg.cad.cad")
-      .then((resp) => {
-        return resp.json();
-      })
-      .then((resp) => {
-        setUsers(resp);
-        setHelper("7wg.cad.cad");
-      });
-  }, []);
+    if (username != null || username != undefined || username != "")
+      fetch("http://11.0.0.118:8537/get-senders/7wg.cad.cad")
+        .then((resp) => {
+          return resp.json();
+        })
+        .then((resp) => {
+          setUsers(resp);
+          setHelper("7wg.cad.cad");
+          setLoading(false);
+        });
+  }, [username]);
+
+  // useEffect(() => {
+  //   fetch("http://11.0.0.118:9090/user_service/api/getUserRoles", {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Accept: "application/json",
+  //       username,
+  //       Authorization: "Bearer " + sessionStorage.getItem("jwt_token"),
+  //     },
+  //   }).then(async (resp) => {
+  //     const data = await resp.json();
+  //     console.log(data);
+  //     setLoading(false);
+  //   });
+  // }, [username]);
 
   useEffect(() => {
-    console.log(sender);
     if (sender !== null) {
       fetch(`http://11.0.0.118:8537/get-chat/${sender.user}`, {
         headers: { sender: "7wg.cad.cad" },
@@ -57,6 +77,7 @@ export const HelpdeskProvider = ({ children }) => {
           return resp.json();
         })
         .then((resp) => {
+          setLoading(true);
           let tempArr = [];
           resp.map((item) =>
             tempArr.push({
@@ -80,6 +101,7 @@ export const HelpdeskProvider = ({ children }) => {
                 ),
             })
           );
+          setLoading(false);
           setmessages(tempArr);
         });
     }
@@ -192,6 +214,9 @@ export const HelpdeskProvider = ({ children }) => {
   return (
     <HelpdeskContext.Provider
       value={{
+        loading,
+        setLoading,
+        setUsername,
         helper,
         sender,
         setSender,

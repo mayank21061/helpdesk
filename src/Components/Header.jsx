@@ -5,6 +5,11 @@ import { IconButton, Tooltip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const handleLogout = () => {
+    navigate("/");
+    localStorage.clear();
+    sessionStorage.clear();
+  };
   const navigate = useNavigate();
   return (
     <div className="Header">
@@ -18,8 +23,8 @@ const Header = () => {
       </div>
       <Tooltip title="LOGOUT">
         <IconButton
-          onClick={(e) => {
-            navigate("/");
+          onClick={() => {
+            handleLogout();
           }}
         >
           <LogoutIcon fontSize="small" />

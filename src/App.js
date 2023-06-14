@@ -1,8 +1,8 @@
-import React from "react"
+import React from "react";
 import "./styles/styles.css";
 import HomeScreen from "./Components/HomeScreen";
 import { HelpdeskProvider } from "./ChatContext";
-import {  HashRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "./LoginPage";
 
 function App() {

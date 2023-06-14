@@ -4,9 +4,10 @@ import Chat from "./Chat";
 import { useContext } from "react";
 import { HelpdeskContext } from "../ChatContext";
 import Header from "./Header";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 const HomeScreen = () => {
-  const { user } = useContext(HelpdeskContext);
+  const { loading } = useContext(HelpdeskContext);
   return (
     <>
       <Header />
@@ -14,6 +15,12 @@ const HomeScreen = () => {
         <ChatList />
         <Chat />
       </div>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </>
   );
 };

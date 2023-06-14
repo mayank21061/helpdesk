@@ -1,5 +1,12 @@
-import { Button, IconButton, InputAdornment, TextField } from "@mui/material";
-import React, { useState } from "react";
+import {
+  Backdrop,
+  Button,
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+  TextField,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./styles/LoginPage.css";
 import { useFormik } from "formik";
@@ -12,8 +19,11 @@ import {
 } from "@mui/icons-material";
 import CryptoJS from "crypto-js";
 import Axios from "axios";
+import { useContext } from "react";
+import { HelpdeskContext } from "./ChatContext";
 
 const LoginPage = () => {
+  const { setUsername, loading, setLoading } = useContext(HelpdeskContext);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const initialValues = {
@@ -39,40 +49,112 @@ const LoginPage = () => {
     return ciphertext;
   };
   const handleSubmit = async (data) => {
-    navigate("/helpdesk");
-    // try {
-    //   const headers = {
-    //     "Content-Type": "application/json",
-    //     Accept: "application/json",
-    //   };
-    //   const credentials = {
-    //     username: formik.values.username,
-    //     password: encryptFun(data),
-    //     keycloak: process.env.REACT_APP_KEYCLOAK,
-    //     client_id: process.env.REACT_APP_CLIENT_ID,
-    //   };
-    //   const response = await fetch(
-    //     `${process.env.REACT_APP_PROXY}/auth/token`,
-    //     {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         ...headers,
-    //       },
-    //       body: JSON.stringify(credentials),
-    //     }
-    //   );
-    //   const login = await response.json();
-    //   console.log(login);
-    // } catch (e) {
-    //   console.log(e);
-    // }
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        clientAddress: "hi",
+      };
+      const credentials = {
+        username: formik.values.username,
+        password: encryptFun(data),
+        keycloak: process.env.REACT_APP_KEYCLOAK,
+        client_id: process.env.REACT_APP_CLIENT_ID,
+      };
+      await fetch(`http://11.0.0.118:9999/auth/token`, {
+        method: "POST",
+        headers: {
+          ...headers,
+        },
+        body: JSON.stringify(credentials),
+      })
+        .then(async (response) => {
+          if (response.status === 200) {
+            const login = await response.json();
+            sessionStorage.setItem("jwt_token", login.access_token);
+            sessionStorage.setItem("sessionId", login.session_state);
+            localStorage.setItem("refresh_token", login.refresh_token);
+            localStorage.setItem(
+              "client_id",
+              window.__ENV__.REACT_APP_CLIENT_ID
+            );
+            localStorage.setItem("expires_in", login.expires_in);
+            localStorage.setItem("username", formik.values.username);
+            setUsername(formik.values.username);
+            navigate("/helpdesk");
+          } else if (!navigator.onLine) {
+            alert("Please connect to internet");
+          } else {
+            alert("Please enter correct username and password");
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          localStorage.clear();
+        });
+    } catch (e) {
+      localStorage.clear();
+      console.log(e);
+    }
   };
   const formik = useFormik({
     initialValues: initialValues,
     validationSchema: VALIDATION_SCHEMA,
     onSubmit: handleSubmit,
   });
+
+  let Prime_No, Primitive, Private_Key_A, Secret_A, Shared_Secret;
+
+  const power = (a, b, p) => {
+    if (b == 1) return a;
+    else return Math.pow(a, b) % p;
+  };
+  useEffect(() => {
+    setInterval(() => {
+      handleRefreshToken();
+    }, 400000);
+
+    formik.values.username && handleRefreshToken();
+  }, []);
+
+  useEffect(() => {
+    Prime_No = process.env.REACT_APP_PRIME_NO;
+    Primitive = process.env.REACT_APP_PRIMITIVE;
+    Private_Key_A = Math.floor(Math.random() * (10 - 1 + 1) + 1);
+    Secret_A = power(Primitive, Private_Key_A, Prime_No);
+  }, []);
+
+  const handleRefreshToken = async () => {
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+      };
+
+      const data = JSON.stringify({
+        grant_type: "refresh_token",
+        refresh_token: localStorage.getItem("refresh_token"),
+        keycloak: window.__ENV__.REACT_APP_KEYCLOACK,
+        client_id: localStorage.getItem("client_id"),
+      });
+      const login = await Axios.post(
+        "http://11.0.0.118:9999/auth/refresh-token",
+        data,
+        { headers }
+      );
+
+      if (login.status === 200) {
+        const { data } = login;
+        sessionStorage.setItem("jwt_token", data.access_token);
+        sessionStorage.setItem("sessionId", data.session_state);
+        localStorage.setItem("refresh_token", data.refresh_token);
+        localStorage.setItem("client_id", window.__ENV__.REACT_APP_CLIENT_ID);
+        localStorage.setItem("expires_in", data.expires_in);
+        navigate("/helpdesk");
+      }
+    } catch (error) {
+      localStorage.clear();
+    }
+  };
 
   return (
     <div className="loginPage">
@@ -142,6 +224,12 @@ const LoginPage = () => {
             >
               Login
             </Button>
+            {/* <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={loading}
+            >
+              <CircularProgress color="inherit" />
+            </Backdrop> */}
           </form>
         </div>
       </div>

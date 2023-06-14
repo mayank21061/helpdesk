@@ -4,7 +4,7 @@ import ChatBody from "./ChatBody";
 import { HelpdeskContext } from "../ChatContext";
 
 const Chat = () => {
-  const { user } = useContext(HelpdeskContext);
+  const { user, loading } = useContext(HelpdeskContext);
   return (
     <div className="chat">
       <ChatBody user={user} />

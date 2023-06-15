@@ -31,6 +31,9 @@ function createWindow(width, height) {
       nodeIntegration: true,
       contextIsolation: false,
       enableRemoteModule: true,
+      webSecurity: false,
+      allowRunningInsecureContent: false,
+      webviewTag: true,
       preload: `${path.join(__dirname, "./preload.js")}`,
     },
   });

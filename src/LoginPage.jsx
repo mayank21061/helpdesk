@@ -61,7 +61,7 @@ const LoginPage = () => {
         keycloak: process.env.REACT_APP_KEYCLOAK,
         client_id: process.env.REACT_APP_CLIENT_ID,
       };
-      await fetch(`http://11.0.0.118:9999/auth/token`, {
+      await fetch(`http://11.0.0.118:9090/auth/token`, {
         method: "POST",
         headers: {
           ...headers,
@@ -82,6 +82,7 @@ const LoginPage = () => {
             localStorage.setItem("username", formik.values.username);
             setUsername(formik.values.username);
             navigate("/helpdesk");
+            console.log("came here");
           } else if (!navigator.onLine) {
             alert("Please connect to internet");
           } else {
@@ -137,7 +138,7 @@ const LoginPage = () => {
         client_id: localStorage.getItem("client_id"),
       });
       const login = await Axios.post(
-        "http://11.0.0.118:9999/auth/refresh-token",
+        "http://11.0.0.118:9090/auth/refresh-token",
         data,
         { headers }
       );
